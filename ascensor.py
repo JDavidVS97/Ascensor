@@ -2,7 +2,7 @@ class Ascensor:
     def __init__(self, num_pisos):
         self.num_pisos = num_pisos
         self.piso_actual = 1
-        self.direccion = 1  
+        self.direccion = 1  # 1 para arriba, -1 para abajo, 0 para detenerse
         self.destinos = set()
 
     def llamar_desde_piso(self, piso):
@@ -11,17 +11,13 @@ class Ascensor:
     def mover(self):
         self.piso_actual += self.direccion
 
-    def actualizar_direccion(self):
-        if self.piso_actual == 1:
-            self.direccion = 1
-        elif self.piso_actual == self.num_pisos:
-            self.direccion = -1
-        elif self.piso_actual in self.destinos:
-            self.direccion = 1
-        elif self.direccion == 1 and max(self.destinos) < self.piso_actual:
-            self.direccion = -1
-        elif self.direccion == -1 and min(self.destinos) > self.piso_actual:
-            self.direccion = 1
+    def actualizar_direccion(self, destino):
+        if self.piso_actual < destino:
+            self.direccion = 1  # Subir
+        elif self.piso_actual > destino:
+            self.direccion = -1  # Bajar
+        else:
+            self.direccion = 0  # Detenerse
 
     def abrir_puerta(self):
         print(f"Ascensor llegó al piso {self.piso_actual}. Puerta abierta.")
@@ -32,7 +28,7 @@ class Ascensor:
     def ir_a_piso(self, destino):
         while self.piso_actual != destino:
             self.mover()
-            self.actualizar_direccion()
+            self.actualizar_direccion(destino)
 
     def mostrar_camino(self, destino):
         print(f"Ascensor se mueve hacia {'arriba' if self.direccion == 1 else 'abajo'} desde el piso {self.piso_actual}", end="")
@@ -50,25 +46,26 @@ class Ascensor:
 
             if opcion == "1":
                 piso_llamada = int(input("Ingrese el piso desde el que desea llamar al ascensor: "))
-                self.destinos.clear() 
+                piso_destino = int(input("Ingrese el piso al que desea ir: "))  # Solicitar el piso de destino
+                self.destinos.add(piso_destino)  # Agregar el destino a la lista de destinos
                 self.llamar_desde_piso(piso_llamada)
 
                 while self.destinos:
-                    self.actualizar_direccion()
+                    piso_destino = max(self.destinos)  # Obtener el destino más alto
+                    self.actualizar_direccion(piso_destino)
 
                     if self.piso_actual in self.destinos:
                         self.abrir_puerta()
-                        destino = int(input("Ingrese el piso al que desea ir: "))
-                        if destino == self.piso_actual:
-                            print("El ascensor ya está en este piso.")
-                        else:
-                            self.mostrar_camino(destino)
-                            self.ir_a_piso(destino)
-                            self.cerrar_puerta()
-                            print("Usuario llegó a destino. Volviendo al menú principal...")
-                            break
-
-                    self.mostrar_camino(max(self.destinos))
+                        print("El ascensor ya está en este piso.")
+                        self.destinos.remove(self.piso_actual)
+                        self.cerrar_puerta()
+                    else:
+                        self.mostrar_camino(piso_destino)
+                        self.ir_a_piso(piso_destino)
+                        self.abrir_puerta()
+                        print("Usuario llegó a destino.")
+                        self.destinos.remove(piso_destino)
+                        self.cerrar_puerta()
 
             elif opcion == "2":
                 print("Saliendo del programa...")
@@ -86,3 +83,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
