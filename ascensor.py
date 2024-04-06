@@ -2,7 +2,7 @@ class Ascensor:
     def __init__(self, num_pisos):
         self.num_pisos = num_pisos
         self.piso_actual = 1
-        self.direccion = 1  # 1 para arriba, -1 para abajo, 0 para detenerse
+        self.direccion = 1 
         self.destinos = set()
 
     def llamar_desde_piso(self, piso):
@@ -46,7 +46,7 @@ class Ascensor:
 
             if opcion == "1":
                 piso_llamada = int(input("Ingrese el piso desde el que desea llamar al ascensor: "))
-                piso_destino = int(input("Ingrese el piso al que desea ir: "))  # Solicitar el piso de destino
+                piso_destino = int(input("Ingrese el piso al que desea ir: ")) 
                 self.destinos.add(piso_destino)  # Agregar el destino a la lista de destinos
                 self.llamar_desde_piso(piso_llamada)
 
